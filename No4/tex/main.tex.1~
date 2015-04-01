@@ -1,0 +1,175 @@
+%%---------------------------------------------------------
+%% 
+%%		File Name : main.tex
+%%		Author	  : Shunsuke Komizunai
+%%		Time-stamp: 
+%%		Memo	  : システム共創情報学研究室全体ミーティングサンプルファイル
+%%
+%%---------------------------------------------------------
+
+\documentclass[10pt]{lab_seminar_j}
+% \usepackage{amsmath,amssymb}
+\usepackage{amsmath}  % 
+\usepackage{graphicx} % 強力な描画環境
+% \usepackage{jtygm}    % イタリックフォントに関する警告の回避
+
+\begin{document}
+
+\newcommand{\mathbi}[1]{\mbox{\boldmath{$#1$}}} % 太字斜体マクロ
+
+\seminum{001} % 全体ミーティング通し番号 (第1回 は 2013.04.18)
+\memonum{13--01} % (西暦の下二桁)--(年度内通し番号)
+\date{2013~年~04~月~18~日} % 発表年月日
+
+\title{システム共創情報学研究室全体ミ－ティングサンプル原稿}
+\author{小水内　俊介}
+
+\maketitle
+
+%%---------------------------------------------------------
+\section{はじめに}
+%%---------------------------------------------------------
+
+\subsection{研究背景}
+
+システム共創情報学研究室全体ミーティングでは，前刷りを用意する．
+
+ヒューマノイドロボットの研究は，移動という点に限ってもかなり高度なデモンストレーションを見ることができるようになった．
+膝関節を伸ばした状態での歩行~\cite{knee stretch ROMANSY} や傾斜が変化する路面における直立や歩行の維持~\cite{qrio}など，ヒューマノイドロボットの移動性能は著しく向上している．
+このような技術の蓄積に後押しされ，屋内におけるヒューマノイドロボットの利用が実現されつつある．
+本研究では，履帯式車両におけるテラメカニクスの理論を拡張し，重心移動や接地脚の切り替えによる地盤反力の変化を考慮する．
+
+
+
+\subsection{研究目標}
+本研究では，ヒューマノイドロボットによる軟弱地面上の歩行実現を目指している．
+軟弱地面の一例として砂地を対象とし，等身大ヒューマノイドロボット~HRP-2~\cite{HRP2} を用いる．
+HRP-2 による砂地歩行を実現するための研究方針として，以下の~5 段階を考えている．
+\begin{enumerate}
+\item 砂地と足底の接地力学モデルの構築
+\item 砂地でのロボットの挙動を予測する動力学シミュレータの開発
+\item 砂地の影響を考慮した歩行動作の生成
+\item 砂地における歩行の安定化制御則の設計
+\item 実機実装・歩行試験
+\end{enumerate}
+
+現在，1. の段階の研究を行っている．
+本論文では，これまで構築してきた接地力学モデルと，本モデルに必要なパラメータの推定実験について述べる．
+
+
+
+
+%%---------------------------------------------------------
+\section{文章}
+%%---------------------------------------------------------
+
+
+%%--------------------------------------------------------------------
+\section{式}
+%%--------------------------------------------------------------------
+
+本文中での参照は，式~(\ref{linear}) のようにする．
+\begin{equation}
+  Y = AX + B
+  \label{linear}
+\end{equation}
+
+
+%%---------------------------------------------------------
+\section{表}
+%%---------------------------------------------------------
+
+
+
+%%--------------------------------------------------------------------
+\section{図}
+%%--------------------------------------------------------------------
+
+図はページ上方に表示する．ただし，第一ページの第一カラムには表示しない．
+図中のフォントタイプ・フォントサイズは本文とあわせる．
+単位のバケットは $[~]$ を用いる．
+本文中での参照は，図~\ref{p-s} のようにする．
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.475\textwidth]{eps/Graph_p-s}
+  \caption{Relationship between pressure and sinkage.}
+  \label{p-s}
+\end{figure}
+
+\subsection{testest}
+xxyzzy
+
+%%---------------------------------------------------------
+\section{参考文献}
+%%---------------------------------------------------------
+
+Web サイトは恒久的な情報源とは言い難い．
+
+
+
+
+%%---------------------------------------------------------
+\section{おわりに}
+%%---------------------------------------------------------
+本論文では，2 脚ロボットの軟弱地面における接地力学モデルについて述べた．
+
+
+
+%%---------------------------------------------------------
+%%  参考文献
+%%---------------------------------------------------------
+{\small
+  \begin{thebibliography}{99}
+
+% \bibitem{knee stretch IROS}
+%  Yu Ogura, Teruo Kataoka, Kazushi Shimomura, Hun-ok Lim and Atsuo Takanishi, 
+%  ``A Novel Method of Biped Walking Pattern Generation with Predetermined Knee joint Motion,'' 
+%  Proceedings of 2004 IEEE/RSJ International Conference on Intelligent Robots and Systems, pp.~2831-2836，2004.
+ 
+\bibitem{knee stretch ROMANSY}
+ Yu Ogura, Hiroyuki Aikawa, Hun-ok Lim and Atsuo Takanishi: 
+ ``Realization of knee Stretch Walking by a New Biped Robot,WABIAN-2LL,'' 
+ in Proc. of the 15th CISM-IFToMM Symp. on Robot Design, Dynamics and Control, ROM04-28，2004.
+ 
+\bibitem{qrio}
+ 黒木義博, 石田健蔵, 山口仁一: 
+ ``小型二足歩行エンターテインメントロボット'', 
+ 第19会日本ロボット学会学術講演会, pp.~1093--1094，2001.
+
+
+
+% 軟弱地盤上の移動に関する研究
+
+\bibitem{Terra}
+ 室達朗: 
+ ``テラメカニックス -走行力学-'', 
+ 技報堂出版, 1993.
+ 
+\bibitem{Ishigami_IROS2006}
+ G. Ishigami, K. Nagatani and K. Yoshida: 
+ ``Path Following Control with Slip Compensation on Loose Soil for Exploration Rover,'' 
+ in Proc. of the IEEE/RSJ Int. Conf. on Intelligent Robots and Systems, pp.~5552--5557, 2006.
+
+\bibitem{HRP2}
+ 五十棲隆勝, 赤地一彦, 平田勝, 金子健二, 梶田秀司, 比留川博久: 
+ ``ヒューマノイドロボット~HRP-2 の開発'', 
+ 日本ロボット学会誌，Vol.~22, No.~8, pp.~1004--1012, 2004.
+  
+  \end{thebibliography}
+}
+
+
+
+%%---------------------------------------------------------
+%%  付録
+%%---------------------------------------------------------
+%
+% \appendix
+% \section{付録~A}
+% \label{appA}
+%
+% ここに，付録~A の内容を書く．
+
+
+\end{document}

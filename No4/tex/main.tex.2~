@@ -1,0 +1,171 @@
+%%---------------------------------------------------------
+%% 
+%%		File Name : main.tex
+%%		Author	  : Kazuya Sase
+%%		Time-stamp: 
+%%		Memo	  : 
+%%
+%%---------------------------------------------------------
+
+\documentclass[twocolumn]{jarticle}
+\setlength{\topmargin}{20mm}
+\addtolength{\topmargin}{-1in}
+\setlength{\oddsidemargin}{20mm}
+\addtolength{\oddsidemargin}{-1in}
+\setlength{\evensidemargin}{15mm}
+\addtolength{\evensidemargin}{-1in}
+\setlength{\textwidth}{170mm}
+\setlength{\textheight}{254mm}
+\setlength{\headsep}{0mm}
+\setlength{\headheight}{0mm}
+\setlength{\topskip}{0mm}
+\usepackage{epic, eepic}
+\usepackage{graphicx}
+\usepackage{epsfig}
+\usepackage{nidanfloat}
+\usepackage{float}
+
+
+\def\vec#1{\mbox{\boldmath $#1$}} 
+
+
+
+\title{ナイフと脳モデルの接触判定}
+\author{佐瀬 一弥}
+\date{2013/07/17} 
+\begin{document}
+
+\maketitle
+
+ナイフによる生体組織切断シミュレーション構築に向けてナイフと脳モデルの接
+触判定方法を検討した．ナイフを切断方向を持つ線分とみなし，
+脳モデルの初期形状に対して接触判定を行い，強制変位を与える方法を示す．
+
+ナイフを切断方向を持つ線分とみなす（図\ref{fig:knife}）．
+$\rm{{P}_{tip}}$, $\rm{{P}_{base}}$はそれぞれ刃先，刃元の点を表し，
+その位置ベクトルを$\vec{P}_{tip}$, $\vec{P}_{base}$とする．
+$\vec{V}_{cut}$は切断方向ベクトルで線分$\rm{{P}_{tip}}\rm{{P}_{base}}$と
+垂直である．
+
+
+\begin{figure}[h]
+ \begin{center}
+  \includegraphics[width=0.6\linewidth]{figs/knife_model.eps}
+  \caption{Knife model}
+  \label{fig:knife}
+ \end{center}
+\end{figure}
+
+
+図\ref{fig:cd2d}に接触判定と強制変位の概要を示す．
+図\ref{fig:cd2d}(a)は線分$\rm{{P}_{n1}}\rm{{P}_{n2}}$を
+真上から見た様子である．
+線分$\rm{{P}_{n1}}\rm{{P}_{n2}}$から$\vec{V}_{cut}$と逆方向に
+線分を走査し半無限平面を伸ばす．
+半無限平面と交差する線分のうち最も点$\rm{P_{tip}}$から
+遠い線分を接触線分とみなす．
+その交点を$\rm{P_{contact}}$とおく．
+接触線分の端点$\rm{P_1}$, $\rm{P_2}$に対して強制変位を与える(c)．
+強制変位は$\vec{V}_{cut}$方向で大きさは点$\rm{P_{contact}}$と
+線分$\rm{P_{base}}\rm{P_{tip}}$の距離である．
+
+\begin{figure}[h]
+ \begin{center}
+  \includegraphics[width=\linewidth]{figs/CollisionDetection2d.eps}
+  \caption{Intersection determination (Top-veiw)}
+  \label{fig:cd2d}
+ \end{center}
+\end{figure}
+
+
+図\ref{fig:cd3d}に三次元的なイラストを示す．
+線分$\rm{{P}_{n1}}\rm{{P}_{n2}}$を切断方向ベクトル$\vec{V}_{cut}$の逆
+方向に走査して得られる半無限平面を$S_{ray}$とする．
+平面$S_{ray}$の単位法線ベクトル$\vec{n}$は次式で与えれる．
+\begin{equation}
+ \vec{n}=\frac{\vec{V}_{cut}\times \left( \vec{P}_{base}-\vec{P}_{tip}   \right)}{|\vec{V}_{cut}\times \left( \vec{P}_{base}-\vec{P}_{tip}   \right)|}
+\end{equation}
+なお，単位法線ベクトルの向きを逆にとっても以降の交差判定に影響を与えるこ
+とはない．
+
+
+
+\begin{figure}[h]
+ \begin{center}
+  \includegraphics[width=0.6\linewidth]{figs/CollisionDetection3d.eps}
+  \caption{Intersection determination illustrated in 3-D}
+  \label{fig:cd3d}
+ \end{center}
+\end{figure}
+
+\clearpage
+
+脳モデルの表面を構成するすべての
+線分$\rm{{P}_{n1}}\rm{{P}_{n2}}$と，
+面$S_{ray}$を内包する無限平面との交差判定
+を行う（図\ref{fig:intersection}）．
+次式を満たすならば交差している（端点における交差も含む）．
+\begin{equation}
+ \left( \vec{P}_{n2}-\vec{P}_{tip} \right) \cdot \vec{n} \times  \left( 
+  \vec{P}_{n1}-\vec{P}_{tip} \right) \cdot \vec{n}   \leq 0
+\end{equation}
+交点$\vec{P}_{contact}$は次式により求められる．
+\begin{equation}
+ \vec{P}_{contact}=\vec{P}_{n1}+\frac{d_{n1}}{d_{n1}+d_{n2}}\left( \vec{P}_{n2}-\vec{P}_{tip}   \right)
+\end{equation}
+ただし，$d_{n1}$, $d_{n2}$は交点$\rm{P_{contact}}$と線分の端点$\rm{n_1}$, 
+$\rm{n_2}$間の距離であり次式で与えられる．
+\begin{equation}
+ d_{n1}=|\left( \vec{P}_{n1}-\vec{P}_{tip} \right) \cdot \vec{n}|
+\end{equation}
+\begin{equation}
+ d_{n2}=|\left( \vec{P}_{n2}-\vec{P}_{tip} \right) \cdot \vec{n}|
+\end{equation}
+
+
+\begin{figure}[b]
+ \begin{center}
+  \includegraphics[width=0.8\linewidth]{figs/intersection.eps}
+  \caption{Intersection determination}
+  \label{fig:intersection}
+ \end{center}
+\end{figure}
+
+
+次に面$S_{ray}$における$\vec{P}_{contact}$の内外判定を行う（図\ref{fig:intersection}）．
+刃の後側（刃先は含まない）であるならば次式を満たす．
+\begin{equation}
+\label{eq:dforced}
+ \left( \vec{P}_{contact}-\vec{P}_{tip} \right) \cdot \vec{V}_{cut}  < 0
+\end{equation}
+刃先，刃元の内側（刃先，刃元上を含む）であるならば次式を満たす．
+\begin{equation}
+ \left( \vec{P}_{contact}-\vec{P}_{tip} \right) \cdot \left( 
+  \vec{P}_{base}-\vec{P}_{tip} \right) \geq 0
+\end{equation}
+\begin{equation}
+ \left( \vec{P}_{contact}-\vec{P}_{base} \right) \cdot \left( 
+  \vec{P}_{tip}-\vec{P}_{base} \right) \geq 0
+\end{equation}
+
+強制変位ベクトル$\vec{d}$は次式により求められる．
+\begin{equation}
+ \vec{d} = d_{forced} \vec{V}_{cut}
+\end{equation}
+ただし，$d_{forced}$は次式で定義される．
+\begin{equation}
+ d_{forced}=-\left( \vec{P}_{contact}-\vec{P}_{tip} \right) \cdot \vec{V}_{cut}
+\end{equation}
+$d_{forced}$は式(\ref{eq:dforced})で得られているため新たに計算する必要はない．
+
+\begin{figure}[b]
+ \begin{center}
+  \includegraphics[width=0.4\linewidth]{figs/innerorouter.eps}
+  \caption{Inner-outer determination}
+  \label{fig:io}
+ \end{center}
+\end{figure}
+
+
+
+\end{document}

@@ -1,0 +1,97 @@
+%%---------------------------------------------------------
+%% 
+%%		File Name : main.tex
+%%		Author	  : Kazuya Sase
+%%		Time-stamp: 
+%%		Memo	  : 
+%%
+%%---------------------------------------------------------
+
+\documentclass[twocolumn]{jarticle}
+\setlength{\topmargin}{20mm}
+\addtolength{\topmargin}{-1in}
+\setlength{\oddsidemargin}{20mm}
+\addtolength{\oddsidemargin}{-1in}
+\setlength{\evensidemargin}{15mm}
+\addtolength{\evensidemargin}{-1in}
+\setlength{\textwidth}{170mm}
+\setlength{\textheight}{254mm}
+\setlength{\headsep}{0mm}
+\setlength{\headheight}{0mm}
+\setlength{\topskip}{0mm}
+\usepackage{epic, eepic}
+\usepackage{graphicx}
+\usepackage{epsfig}
+\usepackage{nidanfloat}
+\usepackage{float}
+
+
+\def\vector#1{\mbox{\boldmath $#1$}} 
+
+
+
+\begin{document}
+\[
+ \mathbf{K}_e = \mathbf{B}_e^{\rm T} \mathbf{D} \mathbf{B}_e A_e t
+\]
+\[
+ \mathbf{D} = \frac{E}{1-\nu^2}
+ \left[
+ \begin{array}{ccc}
+  1 & \nu & 0 \\
+  \nu & 1 & 0 \\
+  0 & 0 & \displaystyle \frac{1-\nu}{2} 
+ \end{array}
+ \right]
+\]
+\[
+ \mathbf{B}_e = \frac{1}{2A_e}
+ \left[
+ \begin{array}{cccccc}
+  y_{e23} & 0 & y_{e31} & 0 & y_{e12} & 0 \\
+  0 & x_{e32} & 0 & x_{e13} & 0 & x_{e21} \\
+  x_{e32} & y_{e23} & x_{e13} & y_{e31} & x_{e21} & y_{e12} 
+ \end{array}
+ \right]
+\]
+\[
+ A_e = \frac{1}{2}
+ \left| 
+  \begin{array}{ccc}
+   1 & x_1 & y_1 \\
+   1 & x_2 & y_2 \\
+   1 & x_3 & y_3
+  \end{array}
+ \right|
+\]
+\[
+\left[
+ \begin{array}{l}
+  \vector{f}_{\rm f}\\
+  \vector{f}_{\rm d}
+ \end{array}
+\right]
+  = 
+\left[
+ \begin{array}{ll}
+  \mathbf{K}_{\rm ff} & \mathbf{K}_{\rm fd}\\
+  \mathbf{K}_{\rm df} & \mathbf{K}_{\rm dd}
+ \end{array}
+\right]
+\left[
+ \begin{array}{l}
+  \vector{u}_{\rm f}\\
+  \vector{u}_{\rm d}
+ \end{array}
+\right]
+\]
+
+\[
+ \mathbf{K}_{\rm ff} \vector{u}_{\rm f} = \vector{f}_{\rm f} - 
+ \mathbf{K}_{\rm fd} \vector{u}_{\rm d}
+\]
+\[
+ \vector{f}_{\rm d} = \mathbf{K}_{\rm df} \vector{u}_{\rm f} + 
+ \mathbf{K}_{\rm dd} \vector{u}_{\rm d}
+\]
+\end{document}
