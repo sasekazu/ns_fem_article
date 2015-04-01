@@ -16,7 +16,8 @@
         <p>
             <a href="http://www.natural-science.or.jp/article/20130922210408.php">第1回　メッシュのデータ構造とCanvas要素による描画</a><br />
             <a href="http://www.natural-science.or.jp/article/20131102210939.php">第2回　Numeric.jsによる線形代数</a><br />
-            <a href="http://www.natural-science.or.jp/article/20131102210939.php">第3回　変形の表現と境界条件</a>
+	        <a href="http://www.natural-science.or.jp/article/20131201161759.php">第3回　変形の表現と境界条件</a><br />
+            <a href="http://www.natural-science.or.jp/article/20150401013747.php">第4回　全体剛性マトリクスの組み立てと剛性方程式の求解</a>
         </p>
         <p>
         第4回では全体剛性マトリクスの組み立てと剛性方程式の求解について説明します．
@@ -26,7 +27,7 @@
         <h3>要素剛性マトリクス</h3>
         <p>
         三角形定ひずみ要素の場合，
-        要素剛性マトリクスは次式のように，行列積で求められます．
+        要素剛性マトリクスは次式のように行列積で求められます．
         </p>
         <p style="text-align:center">
             <img src="http://www.natural-science.or.jp/images/sase-fem-4-1.png"
@@ -65,12 +66,11 @@
         </p>
         <p>	
         今回はマトリクス D, Be が何を意味するのかには触れませんが，今後の記事の中で必要に応じて説明したいと思います．
-		要素剛性マトリクスが上記の式によって求められることを認めるとして，実装はどのようにしたらよいかを考えます．
-        ここでは，要素剛性マトリクスを配列に格納するコードの流れを示します．
+		要素剛性マトリクスが上記の式によって求められることを認めるとして，実装について考えることにします．
         以下の疑似コードを参照してください．
 		これまでの記事で，メッシュの形状に関する情報はすでに用意してあるので，
-		新たな情報としてヤング率，ポアソン比，材料の厚さを与えることで要素剛性マトリクスが構成できることが
-		確認できます．
+		新たな情報としてヤング率，ポアソン比，材料の厚さの材料特性に関する値が必要となります．
+		材料特性と節点の初期位置，三角形の節点番号リストがあれば要素剛性マトリクスが作成できます．
 		JavaScriptによる実装は記事の最後にまとめて示しますので，
 		詳細な実装を確認したい方は最後のfem.js で定義されている FEM.assembleStiffnessMatrix メソッドを参照してください．
         </p>
@@ -99,13 +99,13 @@
         }
         </pre>
         <p>
-        ※ 実際のコードでは行列積は numericjs で実装することになります．<br>
-        ※ calcD(), calcAe(), calcBe()は上記の式に従って定義する必要があります．<br>
+        ※ 実際のコードでは行列演算を numeric.js で実装することになります．<br>
+        ※ calcD(), calcAe(), calcBe() は上記の式に従って定義する必要があります．<br>
         ※ x0, y0... は数式と合わせるために追加した変数であり，実際にはこのように一時的に変数に格納する必要はありません．
         </p>
         <h3>全体剛性マトリクスの組み立て</h3>
         <p>
-		要素剛性マトリクスを元に，全体剛性マトリクスを組み立てます．
+		要素剛性マトリクスを元に全体剛性マトリクスを組み立てます．
         第１回で扱った下図に示す２つの三角形からなるメッシュを題材に説明します．
         </p>
         <p style="text-align:center">
@@ -139,7 +139,7 @@
         全体剛性マトリクスの該当箇所に順に足しこむことで目的が達成できます．
 		以下に疑似コードを示します．詳細な実装は記事の最後に示す fem.js の FEM.assembleStiffnessMatrix メソッドを参照してください．
         </p>
-        <pre class="brush: js; highlight:[9, 10, 11];">
+        <pre class="brush: js; highlight:[8, 9, 10];">
         // 疑似コード
         // K:        全体剛性マトリクス
         
@@ -150,7 +150,6 @@
                     K(tri[e][i], tri[e][j]) += Ke[e](i, j);		
                     // ↑注意: 疑似コード 
                     // K(a, b) はKを2×2ごとに分割したときの a行 b列 部分行列を表すものとして記述した
-                    
                 }
             }
         }
@@ -187,24 +186,27 @@
                  alt="" />
         </p>
         <p>
-        このように分割すると，uf, fd が未知数でその他は既知となります．まず，uf は次の連立一次方程式を解くことで得られます．
+        このように分割すると，uf, fd が未知数でその他は既知となります．まず，未知変数 uf は次の連立一次方程式を解くことで得られます．
         </p>
         <p style="text-align:center">
             <img src="http://www.natural-science.or.jp/images/sase-fem-4-solve.png"
                  alt="" />
         </p>
         <p>
-        次に，得られた uf を用いて fd は次の式により求められます．
+        次に，得られた uf を用いて もうひとつの未知変数 fd を次の式により求められます．
         </p>
         <p style="text-align:center">
             <img src="http://www.natural-science.or.jp/images/sase-fem-4-fd.png"
                  alt="" />
         </p>
+		<p>
+		uf, fd が求められたら全体変位ベクトル，全体外力ベクトル，節点の現在位置を更新することができます．
+		</p>
         <p>
        さて，Kff, Kfd, Kdf, Kdd を作成するにはどうすればよいでしょうか．
        第3回で uf, ud, ff, fd の作成のために用いた， dlist, flist という配列をここでも用います．
-       Kffの作成のコードを以下示します．
-       なお，ハイライトした行は続くKfd作成コードと異なる行です．
+       Kff の作成のコードを以下示します．
+       なお， Kff 作成コードとその下で示す Kfd 作成コードを比較する参考のために行をハイライトしました．
        </p>
 		<pre class="brush: js; highlight:[2, 5];">
         	for(var i = 0; i < flist.length; ++i){
@@ -218,7 +220,7 @@
             }
         </pre>
         <p>
-        Kfdは以下のように作成できます．
+        Kfd は以下のように作成できます．
         </p>
 		<pre class="brush: js; highlight:[2, 5];">
         	for(var i = 0; i < flist.length; ++i){
@@ -235,11 +237,13 @@
         Kdf, Kdd も同様に作成することができますが，
 		Kは対称行列となるため Kdf は Kfd の転置行列となり処理を省くことができます．
         </p>
+		
+		
 		<h3>剛性方程式求解の結果の例</h3>
 		<p>
 		実装は次節に掲載しましたので，そちらを参考いただき，先に結果を示します．<br>
 		main.js のメッシュ生成部と境界条件部を変更し，剛性方程式を解いた後に得られた
-		変形形状を描画してみます．<br>
+		変形形状と等価節点外力を描画してみます．<br>
 		</p>
 		<pre class="brush: js;">
 	// 三角形メッシュ生成
@@ -303,10 +307,20 @@
         </p>
 		<p>
 		以上のように，板状の物体を引き延ばした様子が計算されました．
-		引き延ばすと板の中央部分がくびれる様子は見た目では妥当な挙動と思われます．
-		ここで得られた数値解が偏微分方程式の厳密解と一致するかどうか，今後の記事で検証しようと思います．
+		引き延ばすと板の中央部分がくびれる様子は妥当な挙動のように思われます．
+		等価節点外力も何となく妥当な分布を示しているように見えますが，これで良いのかどうかは判断が難しいですね．
+		一般的に正しい解析が行われているかどうかを判断するため，
+		数値解が偏微分方程式の厳密解と一致するかどうかを検証する必要があります．
+		これについては今後の記事で説明する予定です．
 		</p>
+		
+		
+		
+		
         <h3>JavaScriptによる実装</h3>
+		<p><a href="http://www.natural-science.or.jp/images/sase-fem-4-sample.zip">サンプルコード（zipファイル）</a>
+
+</p>
 		<p>
 		前回と同じように同一ディレクトリに index.html, main.js, fem.js, numeric-1.2.6.min.js を配置します．
 		numeric-1.2.6.min.js は配布ページからダウンロードしたものを用いてください．
@@ -547,106 +561,123 @@ FEM.prototype.solve = function (){
 </pre>
 <h4>main.js</h4>
 <p>
-main.js は以下のように メソッド assembleStiffnessMatrix() と solve() の呼び出しを追加するだけです．
+main.js は以下のように メソッド assembleStiffnessMatrix() と solve() の呼び出しと，
+等価節点外力の描画を追加します．
+また，メッシュの描画の様子がわかりやすいように色・透明度・塗りなどを変更しました．
 </p>
-<pre class="brush: js; highlight:[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]">
+<pre class="brush: js; highlight:[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,43,44,45,46,47,49,50,51,52,53,54,55,56,57,59,60,61,62,63,64,65,97,98,99,100,101,102,103,104,105]">
 // JavaScript source code
 // HTMLを読み終わった後に実行する関数
 $(document).ready(function () {
  
-	// FEMクラスのインスタンス化
-	var young = 1e6;
-	var poisson = 0.4;
-	var thickness = 1.0;
-	var fem=new FEM(young, poisson, thickness);
-	 
-	// 三角形メッシュ生成
-	fem.generateTriangleMesh(200, 200, 2, 2);
+    // FEMクラスのインスタンス化
+    var young     = 1e6;    // ヤング率
+    var poisson   = 0.4;    // ポアソン比
+    var thickness = 1.0;    // 厚さ
+    var fem=new FEM(young, poisson, thickness);
+     
+    // 三角形メッシュ生成
+    fem.generateTriangleMesh(200, 200, 5, 5);
+     
+    // 剛性マトリクスの組立
+    fem.assembleStiffnessMatrix();
+      
+    // 境界条件の設定
+    fem.setBoundaryCondition(0, 200, [20, 40]);
 
-	// 剛性マトリクスの組立
-	fem.assembleStiffnessMatrix();
-	 
-	// 境界条件の設定
-	fem.setBoundaryCondition(0, 200, [0, -40]);
+    // 剛性方程式の求解
+    fem.solve();
 
-	// 剛性方程式の求解
-	fem.solve();
+    // 変位ベクトルによる現在形状の更新
+    for(var i=0; i&lt;fem.pos.length; i++) {
+        for(var j=0; j&lt;2; j++){
+            fem.pos[i][j] = fem.initpos[i][j] + fem.u[2*i+j];
+        }
+    }
+     
+    // 2dコンテキスト取得
+    var canvas  = $(&quot;#model_viewer&quot;);
+    var context = canvas.get(0).getContext(&quot;2d&quot;);
+    canvas.get(0).width  = canvas.get(0).clientWidth;
+    canvas.get(0).height = canvas.get(0).clientHeight;
+    var canvasWidth  = canvas.get(0).width;
+    var canvasHeight = canvas.get(0).height;
+ 
+    // 座標変換
+    var xzero = canvasWidth*0.5; // キャンバス要素の幅の半分
+    var yzero = canvasHeight*0.9; // キャンバス要素の高さの90%の部分
+    context.setTransform(1, 0, 0, -1, xzero, yzero);
+ 
+    // 初期形状の描画
+    context.strokeStyle = &#039;gray&#039;;
+    for(var i=0; i&lt;fem.tri.length; i++) {
+        drawtri(fem.initpos[fem.tri[i][0]], fem.initpos[fem.tri[i][1]], fem.initpos[fem.tri[i][2]]);
+    }
+ 
+    // 現在形状の描画
+    context.strokeStyle = &#039;black&#039;;
+    context.fillStyle   = &#039;gray&#039;;
+    context.globalAlpha = 0.7;
+    for(var i=0; i&lt;fem.tri.length; i++) {
+        drawtri(fem.pos[fem.tri[i][0]], fem.pos[fem.tri[i][1]], fem.pos[fem.tri[i][2]]);
+        filltri(fem.pos[fem.tri[i][0]], fem.pos[fem.tri[i][1]], fem.pos[fem.tri[i][2]]);
+    }
+    context.globalAlpha = 1.0;
 
-	// 変位ベクトルによる現在形状の更新
-	for(var i=0; i&lt;fem.pos.length; i++) {
-		for(var j=0; j&lt;2; j++){
-			fem.pos[i][j] = fem.initpos[i][j] + fem.u[2*i+j];
-		}
-	}
-	 
-	// 2dコンテキスト取得
-	var canvas = $(\&quot;#model_viewer\&quot;);
-	var context = canvas.get(0).getContext(\&quot;2d\&quot;);
-	canvas.get(0).width = canvas.get(0).clientWidth;
-	canvas.get(0).height = canvas.get(0).clientHeight;
-	var canvasWidth = canvas.get(0).width;
-	var canvasHeight = canvas.get(0).height;
- 
-	// 座標変換
-	var xzero = canvasWidth*0.5; // キャンバス要素の幅の半分
-	var yzero = canvasHeight*0.9; // キャンバス要素の高さの90%の部分
-	context.setTransform(1, 0, 0, -1, xzero, yzero);
- 
-	// 初期形状の描画
-	context.strokeStyle = \'black\';
-	for(var i=0; i&lt;fem.tri.length; i++) {
-		drawtri(fem.initpos[fem.tri[i][0]], fem.initpos[fem.tri[i][1]], fem.initpos[fem.tri[i][2]]);
-	}
- 
-	// 現在形状の描画
-	context.strokeStyle = \'red\';
-	for(var i=0; i&lt;fem.tri.length; i++) {
-		drawtri(fem.pos[fem.tri[i][0]], fem.pos[fem.tri[i][1]], fem.pos[fem.tri[i][2]]);
-	}
+    // 等価節点外力の描画
+    context.strokeStyle = &#039;red&#039;;
+    for(var i=0; i&lt;fem.pos.length; ++i) {
+        var fScale = 3e-6;
+        var fDist = numeric.add(fem.pos[i], [fScale*fem.f[2*i], fScale*fem.f[2*i+1]]);
+        drawLine(fem.pos[i], fDist);
+    }
 
-	// 変位既知節点の描画
-	context.strokeStyle=\'blue\';
-	context.fillStyle=\'blue\';
-	for(var i=0; i&lt;fem.dlist.length; i++) {
-		drawCircle(fem.pos[fem.dlist[i]], 5);
-	}
-	// 外力既知節点の描画
-	context.strokeStyle=\'green\';
-	context.fillStyle=\'green\';
-	for(var i=0; i&lt;fem.flist.length; i++) {
-		drawCircle(fem.pos[fem.flist[i]], 5);
-	}
+    // 変位既知節点の描画
+    context.strokeStyle = &#039;blue&#039;;
+    context.fillStyle   = &#039;blue&#039;;
+    for(var i=0; i&lt;fem.dlist.length; i++) {
+        drawCircle(fem.pos[fem.dlist[i]], 2);
+    }
  
-	// 線の描画関数
-	function drawLine(p1, p2) {
-		context.beginPath();
-		context.moveTo(p1[0], p1[1]);
-		context.lineTo(p2[0], p2[1]);
-		context.stroke();
-	}
-	// 円の描画関数
-	function drawCircle(p, radius) {
-		context.beginPath();
-		context.arc(p[0], p[1], radius, 0, 2*Math.PI, true);
-		context.stroke();
-		context.fill();
-	}
-	// 三角形の描画関数
-	function drawtri(p1, p2, p3) {
-		context.beginPath();
-		context.moveTo(p1[0], p1[1]);
-		context.lineTo(p2[0], p2[1]);
-		context.lineTo(p3[0], p3[1]);
-		context.closePath();
-		context.stroke();
-	}
+    // 線の描画関数
+    function drawLine(p1, p2) {
+        context.beginPath();
+        context.moveTo(p1[0], p1[1]);
+        context.lineTo(p2[0], p2[1]);
+        context.stroke();
+    }
+    // 円の描画関数
+    function drawCircle(p, radius) {
+        context.beginPath();
+        context.arc(p[0], p[1], radius, 0, 2*Math.PI, true);
+        context.stroke();
+        context.fill();
+    }
+    // 三角形の描画関数
+    function drawtri(p1, p2, p3) {
+        context.beginPath();
+        context.moveTo(p1[0], p1[1]);
+        context.lineTo(p2[0], p2[1]);
+        context.lineTo(p3[0], p3[1]);
+        context.closePath();
+        context.stroke();
+    }
+    // 三角形の描画関数
+    function filltri(p1, p2, p3) {
+        context.beginPath();
+        context.moveTo(p1[0], p1[1]);
+        context.lineTo(p2[0], p2[1]);
+        context.lineTo(p3[0], p3[1]);
+        context.closePath();
+        context.fill();
+    }
 });
 </pre>
 <h4>index.html</h4>
 <p>
 index.htmlは変更がありませんが，再掲します．
 </p>
-<pre class="brush: js; highlight:[5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]">
+<pre class="brush: js;">
 &lt;!doctype html&gt;
 &lt;html&gt;
 &lt;head&gt;
@@ -678,7 +709,9 @@ index.htmlは変更がありませんが，再掲します．
         <p>
         <a href="http://www.natural-science.or.jp/article/20130922210408.php">第1回　メッシュのデータ構造とCanvas要素による描画</a><br />
         <a href="http://www.natural-science.or.jp/article/20131102210939.php">第2回　Numeric.jsによる線形代数</a><br />
-        <a href="http://www.natural-science.or.jp/article/20131102210939.php">第3回　変形の表現と境界条件</a>
+        <a href="http://www.natural-science.or.jp/article/20131201161759.php">第3回　変形の表現と境界条件</a><br />
+        <a href="http://www.natural-science.or.jp/article/20150401013747.php">第4回　全体剛性マトリクスの組み立てと剛性方程式の求解</a>
+		
         </p>
 		
 		<!--

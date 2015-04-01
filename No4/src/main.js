@@ -3,17 +3,17 @@
 $(document).ready(function () {
  
 	// FEMクラスのインスタンス化
-	var young = 1e6;
-	var poisson = 0.4;
-	var thickness = 1.0;
+	var young     = 1e6;	// ヤング率
+	var poisson   = 0.4;	// ポアソン比
+	var thickness = 1.0;	// 厚さ
 	var fem=new FEM(young, poisson, thickness);
 	 
 	// 三角形メッシュ生成
 	fem.generateTriangleMesh(200, 200, 10, 10);
-
+ 
 	// 剛性マトリクスの組立
 	fem.assembleStiffnessMatrix();
-	 
+  
 	// 境界条件の設定
 	fem.setBoundaryCondition(0, 200, [20, 80]);
 
@@ -28,11 +28,11 @@ $(document).ready(function () {
 	}
 	 
 	// 2dコンテキスト取得
-	var canvas = $("#model_viewer");
+	var canvas  = $("#model_viewer");
 	var context = canvas.get(0).getContext("2d");
-	canvas.get(0).width = canvas.get(0).clientWidth;
+	canvas.get(0).width  = canvas.get(0).clientWidth;
 	canvas.get(0).height = canvas.get(0).clientHeight;
-	var canvasWidth = canvas.get(0).width;
+	var canvasWidth  = canvas.get(0).width;
 	var canvasHeight = canvas.get(0).height;
  
 	// 座標変換
@@ -56,9 +56,17 @@ $(document).ready(function () {
 	}
 	context.globalAlpha = 1.0;
 
+	// 節点等価外力の描画
+	context.strokeStyle = 'red';
+	for(var i=0; i<fem.pos.length; ++i) {
+		var fScale = 3e-6;
+		var fDist = numeric.add(fem.pos[i], [fScale*fem.f[2*i], fScale*fem.f[2*i+1]]);
+		drawLine(fem.pos[i], fDist);
+	}
+
 	// 変位既知節点の描画
-	context.strokeStyle='blue';
-	context.fillStyle='blue';
+	context.strokeStyle = 'blue';
+	context.fillStyle   = 'blue';
 	for(var i=0; i<fem.dlist.length; i++) {
 		drawCircle(fem.pos[fem.dlist[i]], 2);
 	}
